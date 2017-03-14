@@ -171,7 +171,8 @@ class WeldObject(object):
             raise ValueError("Could not compile function {}: {}".format(function, err.message()))
 
         conf = cweld.WeldConf()
-        conf.set("weld.threads", "16")
+        num_threads = os.environ.get("NUM_THREADS", 1)
+        conf.set("weld.threads", str(num_threads))
         conf.set("weld.memory.limit", "100000000000")
         err = cweld.WeldError()
         weld_ret = module.run(conf, arg, err)
