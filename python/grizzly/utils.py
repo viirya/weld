@@ -3,6 +3,7 @@
 Attributes:
     numpy_to_weld_type_mapping (TYPE): Description
 """
+import os
 import subprocess
 
 from weld.weldobject import *
@@ -102,8 +103,9 @@ class NumPyEncoder(WeldObjectEncoder):
             raise Exception("Unable to encode; invalid object type")
 
         numpy_to_weld.restype = self.pyToWeldType(obj).cTypeClass
-        numpy_to_weld.argtypes = [py_object]
-        weld_vec = numpy_to_weld(obj)
+        numpy_to_weld.argtypes = [py_object, WeldInt().cTypeClass]
+        num_threads = os.environ.get("NUM_THREADS", 1)
+        weld_vec = numpy_to_weld(obj, int(num_threads))
         return weld_vec
 
 

@@ -3,16 +3,16 @@ LLVM_VERSION=3.8
 
 ifeq (${OS}, Darwin)
   # OS X
-  CLANG ?= clang
-  CLANGPP ?= clang++
+  CLANG ?= gcc
+  CLANGPP ?= g++
   FLAGS=-march=native -O3 -flto
   DFLAGS=-dynamiclib
   DYLIB_SUFFIX=.dylib
   PYTHON_INCLUDES=-I/usr/include/python2.7 -I/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/numpy/core/include
 else ifeq (${OS}, Linux)
   # Linux
-  CLANG ?= /usr/bin/clang-${LLVM_VERSION}
-  CLANGPP ?= /usr/bin/clang++-${LLVM_VERSION}
+  CLANG ?= gcc
+  CLANGPP ?= g++
   FLAGS=-mavx2 -fuse-ld=gold -flto
   DFLAGS=-shared -fPIC
   DYLIB_SUFFIX=.so
@@ -22,7 +22,7 @@ else
 endif
 
 convertor:
-	${CLANGPP} ${DFLAGS} -w -march=native -lpython2.7 numpy_weld_convertor.cpp -o numpy_weld_convertor${DYLIB_SUFFIX}  ${PYTHON_INCLUDES}
+	${CLANGPP} ${DFLAGS} -fopenmp -w -march=native -lpython2.7 numpy_weld_convertor.cpp -o numpy_weld_convertor${DYLIB_SUFFIX}  ${PYTHON_INCLUDES}
 
 clean:
 	rm -rf run numpy_weld_convertor${DYLIB_SUFFIX} *.pyc
