@@ -127,7 +127,7 @@ class WeldObject(object):
         text = header + " " + "\n".join(list(set(self.constants))) + "\n" + self.weld_code
         return text
 
-    def evaluate(self, restype, verbose=True, decode=True):
+    def evaluate(self, restype, verbose=True, decode=True, num_threads=1):
         function = self.toWeldFunc()
 
         # Returns a wrapped ctypes Structure
@@ -151,12 +151,11 @@ class WeldObject(object):
             else:
                 argtypes.append(self.encoder.pyToWeldType(
                     self.context[name]).cTypeClass)
-                encoded.append(self.encoder.encode(self.context[name]))
+                encoded.append(self.encoder.encode(self.context[name], num_threads))
         end = time.time()
         if verbose:
             print "Total time encoding:", end - start
 
-        start = time.time()
         Args = args_factory(zip(names, argtypes))
         weld_args = Args()
         for name, value in zip(names, encoded):
@@ -169,8 +168,8 @@ class WeldObject(object):
         if err.code() != 0:
             raise ValueError("Could not compile function {}: {}".format(function, err.message()))
 
+        start = time.time()
         conf = cweld.WeldConf()
-        num_threads = os.environ.get("NUM_THREADS", 1)
         conf.set("weld.threads", str(num_threads))
         conf.set("weld.memory.limit", "100000000000")
         err = cweld.WeldError()

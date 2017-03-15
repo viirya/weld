@@ -40,7 +40,7 @@ class LazyOpResult:
         self.weld_type = weld_type
         self.dim = dim
 
-    def evaluate(self, verbose=True, decode=True):
+    def evaluate(self, verbose=True, decode=True, num_threads=1):
         """Summary
 
         Args:
@@ -56,5 +56,6 @@ class LazyOpResult:
                     self.weld_type,
                     self.dim),
                 verbose,
-                decode)
+                decode,
+                num_threads)
         return self.expr
